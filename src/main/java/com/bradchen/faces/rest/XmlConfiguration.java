@@ -1,0 +1,204 @@
+package com.bradchen.faces.rest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+import com.bradchen.faces.rest.data.DataAdapter;
+
+public final class XmlConfiguration implements Configuration {
+
+	/**
+	 * Default path to the configuration file.
+	 */
+	public static final String DEFAULT_CONFIG_FILE_PATH = "/WEB-INF/restful-faces.xml";
+
+	private boolean configured;
+
+	private ClassLoader classLoader;
+
+	private Set<Service> services;
+
+	private Set<DataAdapter> adapters;
+
+	public XmlConfiguration() {
+		configured = false;
+		classLoader = this.getClass().getClassLoader();
+		services = new HashSet<Service>();
+		adapters = new HashSet<DataAdapter>();
+	}
+
+	public ClassLoader getClassLoader() {
+		return classLoader;
+	}
+
+	public void setClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	public void configure() {
+		configure(DEFAULT_CONFIG_FILE_PATH);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void configure(String path) {
+		if (configured) {
+			String message = "This instance is already configured.";
+			throw new ConfigurationException(message);
+		}
+		Document document = getXmlDocument(path);
+		Element root = document.getRootElement();
+
+		Element servicesXml = root.element("services");
+		configureServices(servicesXml.elements("service"));
+
+		Element adaptersXml = root.element("dataFormatAdapters");
+		configureDataFormatAdapters(adaptersXml.elements("dataFormatAdapter"));
+		configured = true;
+	}
+
+	private Document getXmlDocument(String path) {
+		try {
+			InputStream stream = classLoader.getResourceAsStream(path);
+			SAXReader reader = new SAXReader();
+			Document document = reader.read(stream);
+			stream.close();
+			return document;
+		} catch (DocumentException exception) {
+			String message = "Unable to parse the XML config file.";
+			throw new ConfigurationException(message, exception);
+		} catch (IOException exception) {
+			String message = "Unable to load the XML config file.";
+			throw new ConfigurationException(message, exception);
+		}
+	}
+
+	private void configureServices(List<Element> services) {
+		for (Element service : services) {
+			configureService(service);
+		}
+	}
+
+	private void configureService(Element xml) {
+		String url = xml.attributeValue("url");
+		if ((url == null) || "".equals(url)) {
+			String message = "Service url must be defined.";
+			throw new ConfigurationException(message);
+		}
+
+		HttpMethod method = getHttpMethod(xml);
+		String mime = xml.attributeValue("mime");
+
+		Element handlerElement = xml.element("handler");
+		if (handlerElement == null) {
+			String message = "Service handler is not defined for \""
+				+ url + "\".";
+			throw new ConfigurationException(message);
+		}
+		Handler handler = parseHandler(handlerElement);
+
+		services.add(new Service(url, method, mime, handler));
+	}
+
+	private HttpMethod getHttpMethod(Element serviceXml) {
+		try {
+			return HttpMethod.parse(serviceXml.attributeValue("method"));
+		} catch (MethodNotFoundException exception) {
+			String message = "Unrecognized or unsupported HTTP method.";
+			throw new ConfigurationException(message);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Handler parseHandler(Element xml) {
+		String bean = xml.attributeValue("bean");
+		if ((bean == null) || "".equals(bean)) {
+			String message = "Handler bean must be defined.";
+			throw new ConfigurationException(message);
+		}
+
+		String method = xml.attributeValue("method");
+		if ((method == null) || "".equals(method)) {
+			String message = "Handler method must be defined.";
+			throw new ConfigurationException(message);
+		}
+
+		List<String> params = parseHandlerParameters(xml.elements("parameter"));
+
+		return new Handler(bean, method, params);
+	}
+
+	private List<String> parseHandlerParameters(List<Element> xml) {
+		try {
+			String[] params = new String[xml.size()];
+			for (Element param : xml) {
+				int index = Integer.parseInt(param.attributeValue("index"));
+				String name = param.attributeValue("name");
+				if ((name == null) || "".equals(name)) {
+					String message = "Parameter name must be defined.";
+					throw new ConfigurationException(message);
+				}
+				params[index] = name;
+			}
+			return Arrays.asList(params);
+		} catch (NumberFormatException exception) {
+			String message = "Unable to parse parameter.";
+			throw new ConfigurationException(message, exception);
+		} catch (IndexOutOfBoundsException exception) {
+			String message = "Unable to parse parameter.";
+			throw new ConfigurationException(message, exception);
+		}
+	}
+
+	private void configureDataFormatAdapters(List<Element> adapters) {
+		for (Element adapter : adapters) {
+			configureDataFormatAdapter(adapter);
+		}
+	}
+
+	private void configureDataFormatAdapter(Element xml) {
+		try {
+			String clazz = xml.attributeValue("class");
+			if ((clazz == null) || "".equals(clazz)) {
+				String message = "Adapter class must be defined.";
+				throw new ConfigurationException(message);
+			}
+			Object adapter = classLoader.loadClass(clazz).newInstance();
+			if (!(adapter instanceof DataAdapter)) {
+				String message = "The DataAdapter specified needs to "
+					+ "implement the DataAdapter interface.";
+				throw new ConfigurationException(message);
+			}
+			adapters.add((DataAdapter)adapter);
+		} catch (InstantiationException exception) {
+			String message = "Unable to instantiate the DataAdapter specified.";
+			throw new ConfigurationException(message, exception);
+		} catch (IllegalAccessException exception) {
+			String message = "Unable to instantiate the DataAdapter specified.";
+			throw new ConfigurationException(message, exception);
+		} catch (ClassNotFoundException exception) {
+			String message = "Could not find the DataAdapter specified.";
+			throw new ConfigurationException(message, exception);
+		}
+	}
+
+	@Override
+	public Set<Service> getServices() {
+		return Collections.unmodifiableSet(services);
+	}
+
+	@Override
+	public Set<DataAdapter> getDataAdapters() {
+		return Collections.unmodifiableSet(adapters);
+	}
+
+}

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-Version: 1.0.0.SNAPSHOT
+Bundle-Name: JSF REST Plugin
+Bundle-ManifestVersion: 2
+Bundle-Description: This is a JSF plugin for supporting RESTful web services.
+Bundle-SymbolicName: com.bradchen.faces.rest
+Export-Package: com.bradchen.faces.rest
+Import-Package: javax.faces;version="2",
+ org.dom4j,
+ org.dom4j.io

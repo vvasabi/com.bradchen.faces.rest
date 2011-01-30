@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<restful-faces>
+	<services>
+		<service url="/test/{param1}/{param2}" method="GET"
+			mime="application/json">
+			<handler bean="bean" method="method">
+				<parameter index="0" name="param1" />
+				<parameter index="1" name="param2" />
+			</handler>
+		</service>
+	</services>
+	<dataFormatAdapters>
+		<dataFormatAdapter class="com.bradchen.faces.rest.data.JsonDataAdapter" />
+	</dataFormatAdapters>
+</restful-faces>
