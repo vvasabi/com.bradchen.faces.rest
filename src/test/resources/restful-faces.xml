@@ -9,7 +9,7 @@
 			</handler>
 		</service>
 	</services>
-	<dataFormatAdapters>
-		<dataFormatAdapter class="com.bradchen.faces.rest.data.JsonDataAdapter" />
-	</dataFormatAdapters>
+	<dataFormatters>
+		<dataFormatter class="com.bradchen.faces.rest.data.JsonDataFormatter" />
+	</dataFormatters>
 </restful-faces>

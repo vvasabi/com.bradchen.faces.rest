@@ -13,7 +13,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.bradchen.faces.rest.data.DataAdapter;
+import com.bradchen.faces.rest.data.DataFormatter;
 
 public final class XmlConfiguration implements Configuration {
 
@@ -28,13 +28,13 @@ public final class XmlConfiguration implements Configuration {
 
 	private Set<Service> services;
 
-	private Set<DataAdapter> adapters;
+	private Set<DataFormatter> formatters;
 
 	public XmlConfiguration() {
 		configured = false;
 		classLoader = this.getClass().getClassLoader();
 		services = new HashSet<Service>();
-		adapters = new HashSet<DataAdapter>();
+		formatters = new HashSet<DataFormatter>();
 	}
 
 	public ClassLoader getClassLoader() {
@@ -61,8 +61,8 @@ public final class XmlConfiguration implements Configuration {
 		Element servicesXml = root.element("services");
 		configureServices(servicesXml.elements("service"));
 
-		Element adaptersXml = root.element("dataFormatAdapters");
-		configureDataFormatAdapters(adaptersXml.elements("dataFormatAdapter"));
+		Element formattersXml = root.element("dataFormatters");
+		configureDataFormatters(formattersXml.elements("dataFormatter"));
 		configured = true;
 	}
 
@@ -159,34 +159,34 @@ public final class XmlConfiguration implements Configuration {
 		}
 	}
 
-	private void configureDataFormatAdapters(List<Element> adapters) {
-		for (Element adapter : adapters) {
-			configureDataFormatAdapter(adapter);
+	private void configureDataFormatters(List<Element> formatters) {
+		for (Element formatter : formatters) {
+			configureDataFormatter(formatter);
 		}
 	}
 
-	private void configureDataFormatAdapter(Element xml) {
+	private void configureDataFormatter(Element xml) {
 		try {
 			String clazz = xml.attributeValue("class");
 			if ((clazz == null) || "".equals(clazz)) {
-				String message = "Adapter class must be defined.";
+				String message = "Formatter class must be defined.";
 				throw new ConfigurationException(message);
 			}
-			Object adapter = classLoader.loadClass(clazz).newInstance();
-			if (!(adapter instanceof DataAdapter)) {
-				String message = "The DataAdapter specified needs to "
-					+ "implement the DataAdapter interface.";
+			Object formatter = classLoader.loadClass(clazz).newInstance();
+			if (!(formatter instanceof DataFormatter)) {
+				String message = "The DataFormatter specified needs to "
+					+ "implement the DataFormatter interface.";
 				throw new ConfigurationException(message);
 			}
-			adapters.add((DataAdapter)adapter);
+			formatters.add((DataFormatter)formatter);
 		} catch (InstantiationException exception) {
-			String message = "Unable to instantiate the DataAdapter specified.";
+			String message = "Unable to instantiate the DataFormatter specified.";
 			throw new ConfigurationException(message, exception);
 		} catch (IllegalAccessException exception) {
-			String message = "Unable to instantiate the DataAdapter specified.";
+			String message = "Unable to instantiate the DataFormatter specified.";
 			throw new ConfigurationException(message, exception);
 		} catch (ClassNotFoundException exception) {
-			String message = "Could not find the DataAdapter specified.";
+			String message = "Could not find the DataFormatter specified.";
 			throw new ConfigurationException(message, exception);
 		}
 	}
@@ -197,8 +197,8 @@ public final class XmlConfiguration implements Configuration {
 	}
 
 	@Override
-	public Set<DataAdapter> getDataAdapters() {
-		return Collections.unmodifiableSet(adapters);
+	public Set<DataFormatter> getDataFormatters() {
+		return Collections.unmodifiableSet(formatters);
 	}
 
 }

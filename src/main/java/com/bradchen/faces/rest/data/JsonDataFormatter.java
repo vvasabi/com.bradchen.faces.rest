@@ -1,6 +1,6 @@
 package com.bradchen.faces.rest.data;
 
-public class JsonDataAdapter implements DataAdapter {
+public class JsonDataFormatter implements DataFormatter {
 
 	private static final String MIME = "application/json";
 

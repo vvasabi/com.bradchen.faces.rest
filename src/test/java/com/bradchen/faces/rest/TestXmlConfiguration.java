@@ -6,13 +6,13 @@ import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.bradchen.faces.rest.data.DataAdapter;
+import com.bradchen.faces.rest.data.DataFormatter;
 
 public class TestXmlConfiguration {
 
 	private XmlConfiguration config;
 	private Service[] services;
-	private DataAdapter[] adapters;
+	private DataFormatter[] formatters;
 
 	@BeforeMethod
 	public void setup() {
@@ -21,8 +21,8 @@ public class TestXmlConfiguration {
 		services = new Service[config.getServices().size()];
 		config.getServices().toArray(services);
 
-		adapters = new DataAdapter[config.getDataAdapters().size()];
-		config.getDataAdapters().toArray(adapters);
+		formatters = new DataFormatter[config.getDataFormatters().size()];
+		config.getDataFormatters().toArray(formatters);
 	}
 
 	@Test
@@ -49,13 +49,13 @@ public class TestXmlConfiguration {
 	}
 
 	@Test
-	public void testDataAdaptersSize() {
-		assertEquals(adapters.length, 1);
+	public void testDataFormattersSize() {
+		assertEquals(formatters.length, 1);
 	}
 
 	@Test
-	public void testDataAdapterClass() {
-		assertEquals(adapters[0].getMime(), "application/json");
+	public void testDataFormatterClass() {
+		assertEquals(formatters[0].getMime(), "application/json");
 	}
 
 	@Test(expectedExceptions = ConfigurationException.class)
