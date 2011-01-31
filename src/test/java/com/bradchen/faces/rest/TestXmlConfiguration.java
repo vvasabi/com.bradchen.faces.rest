@@ -55,7 +55,7 @@ public class TestXmlConfiguration {
 
 	@Test
 	public void testDataFormatterClass() {
-		assertEquals(formatters[0].getMime(), "application/json");
+		assertEquals(formatters[0].getMimeTypes()[0], "application/json");
 	}
 
 	@Test(expectedExceptions = ConfigurationException.class)

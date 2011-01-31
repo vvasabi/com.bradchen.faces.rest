@@ -1,8 +1,6 @@
 package com.bradchen.faces.rest.data;
 
-public interface DataFormatter {
-
-	String getMime();
+public interface DataFormatter extends DataAdapter {
 
 	String format(Object data);
 

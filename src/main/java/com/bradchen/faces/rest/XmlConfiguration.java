@@ -61,8 +61,8 @@ public final class XmlConfiguration implements Configuration {
 		Element servicesXml = root.element("services");
 		configureServices(servicesXml.elements("service"));
 
-		Element formattersXml = root.element("dataFormatters");
-		configureDataFormatters(formattersXml.elements("dataFormatter"));
+		Element genericFormattersXml = root.element("genericDataFormatters");
+		configureDataFormatters(genericFormattersXml.elements("dataFormatter"));
 		configured = true;
 	}
 
