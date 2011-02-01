@@ -112,7 +112,7 @@ public final class XmlConfiguration implements Configuration {
 	private HttpMethod getHttpMethod(Element serviceXml) {
 		try {
 			return HttpMethod.parse(serviceXml.attributeValue("method"));
-		} catch (MethodNotFoundException exception) {
+		} catch (HttpMethodNotFoundException exception) {
 			String message = "Unrecognized or unsupported HTTP method.";
 			throw new ConfigurationException(message);
 		}

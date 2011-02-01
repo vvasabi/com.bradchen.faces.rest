@@ -24,7 +24,7 @@ public enum HttpMethod implements Serializable {
 		}
 
 		String message = "Method \"" + method + "\" is not found.";
-		throw new MethodNotFoundException(message);
+		throw new HttpMethodNotFoundException(message);
 	}
 
 }

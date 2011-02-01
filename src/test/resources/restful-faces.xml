@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <restful-faces>
 	<services>
-		<service url="/test/{param1}/{param2}" method="GET"
+		<service url="/test/{param2}/{param1}" method="GET"
 			mime="application/json">
 			<handler bean="bean" method="method">
 				<parameter index="0" name="param1" />

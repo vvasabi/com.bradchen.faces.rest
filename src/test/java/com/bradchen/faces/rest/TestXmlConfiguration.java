@@ -32,7 +32,7 @@ public class TestXmlConfiguration {
 
 	@Test
 	public void testServiceContent() {
-		assertEquals(services[0].getUrl(), "/test/{param1}/{param2}");
+		assertEquals(services[0].getUrl(), "/test/{param2}/{param1}");
 		assertEquals(services[0].getMime(), "application/json");
 		assertEquals(services[0].getHttpMethod(), HttpMethod.GET);
 	}
@@ -40,8 +40,8 @@ public class TestXmlConfiguration {
 	@Test
 	public void testServiceHandler() {
 		Handler handler = services[0].getHandler();
-		assertEquals(handler.getBean(), "bean");
-		assertEquals(handler.getMethod(), "method");
+		assertEquals(handler.getBeanName(), "bean");
+		assertEquals(handler.getMethodName(), "method");
 
 		List<String> parameters = handler.getParameters();
 		assertEquals(parameters.get(0), "param1");
