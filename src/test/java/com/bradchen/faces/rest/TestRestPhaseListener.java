@@ -24,4 +24,18 @@ public class TestRestPhaseListener {
 		assertNotNull(phaseListener.resolveService(HttpMethod.GET, query));
 	}
 
+	@Test
+	public void testPerformService() {
+		MockBean bean = new MockBean();
+		context.addBean("bean", bean);
+
+		String query = "/test/abc/123";
+		context.setQuery(query);
+
+		Service service = phaseListener.resolveService(HttpMethod.GET, query);
+		String[] result = (String[])phaseListener.performService(service, context);
+		assertEquals(result[0], "123");
+		assertEquals(result[1], "abc");
+	}
+
 }
