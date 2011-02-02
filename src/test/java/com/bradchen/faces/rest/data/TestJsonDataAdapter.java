@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -18,6 +17,7 @@ public class TestJsonDataAdapter {
 	private JsonDataAdapter adapter;
 
 	private MockDataObject data;
+	private MockDataObject nested;
 
 	@BeforeMethod
 	public void setup() {
@@ -26,6 +26,12 @@ public class TestJsonDataAdapter {
 		data.setName("Test");
 		data.setDescription("Test Description");
 		data.setValue(123);
+
+		nested = new MockDataObject();
+		nested.setName("Nested Object");
+		nested.setDescription("This object is nested.");
+		nested.setValue(432);
+		data.setNested(nested);
 	}
 
 	@Test
@@ -39,16 +45,47 @@ public class TestJsonDataAdapter {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
+	public void testFormatNested() throws JsonParseException,
+			JsonMappingException, IOException {
+		String json = adapter.format(data);
+		Map<String, Object> parentMap = parseJsonString(json);
+		Map<String, Object> nestedMap = (Map<String, Object>)parentMap.get("nested");
+		assertEquals(nestedMap.get("name"), "Nested Object");
+		assertEquals(nestedMap.get("description"), "This object is nested.");
+		assertEquals(nestedMap.get("value"), 432);
+	}
+
+	@Test
 	public void testParse() {
-		String json = "{" +
-				"\"value\": 456, " +
-				"\"description\": \"simple json data mapping\", " +
-				"\"name\": \"Json Data\"" +
-			"}";
+		String json = getTestJsonString();
 		data = (MockDataObject)adapter.parse(json, MockDataObject.class);
 		assertEquals(data.getName(), "Json Data");
 		assertEquals(data.getDescription(), "simple json data mapping");
 		assertEquals(data.getValue(), 456);
+	}
+
+	@Test
+	public void testParseNested() {
+		String json = getTestJsonString();
+		data = (MockDataObject)adapter.parse(json, MockDataObject.class);
+		nested = data.getNested();
+		assertEquals(nested.getName(), "nested object");
+		assertEquals(nested.getDescription(), "nested object description");
+		assertEquals(nested.getValue(), 135);
+	}
+
+	private String getTestJsonString() {
+		return "{"
+			+ "\"value\": 456, "
+			+ "\"description\": \"simple json data mapping\", "
+			+ "\"name\": \"Json Data\","
+			+ "\"nested\": {"
+				+ "\"name\": \"nested object\","
+				+ "\"description\": \"nested object description\","
+				+ "\"value\": 135"
+			+ "}"
+		+ "}";
 	}
 
 	@SuppressWarnings("unchecked")

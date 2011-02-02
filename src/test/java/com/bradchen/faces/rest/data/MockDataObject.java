@@ -5,6 +5,7 @@ public class MockDataObject {
 	private String name;
 	private String description;
 	private int value;
+	private MockDataObject nested;
 
 	public String getName() {
 		return name;
@@ -28,6 +29,14 @@ public class MockDataObject {
 
 	public void setValue(int value) {
 		this.value = value;
+	}
+
+	public MockDataObject getNested() {
+		return nested;
+	}
+
+	public void setNested(MockDataObject nested) {
+		this.nested = nested;
 	}
 
 }

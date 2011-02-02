@@ -14,8 +14,8 @@ public class JsonDataAdapter implements DataFormatter, DataParser {
 	private static final String MIME = "application/json";
 
 	@Override
-	public String[] getMimeTypes() {
-		return new String[] { MIME };
+	public String getMimeType() {
+		return MIME;
 	}
 
 	@Override

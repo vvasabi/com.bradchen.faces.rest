@@ -57,12 +57,19 @@ public class TestXmlConfiguration {
 
 	@Test
 	public void testDataFormatterClass() {
-		assertEquals(formatters[0].getMimeTypes()[0], "application/json");
+		assertEquals(formatters[0].getMimeType(), "application/json");
 	}
 
 	@Test(expectedExceptions = ConfigurationException.class)
 	public void testConfigureSecondTime() {
 		config.configure();
+	}
+
+	@Test
+	public void testDefaultAdapters() {
+		config = new XmlConfiguration(context);
+		config.configure("default-adapters.xml");
+		assertEquals(config.getDataFormatters().size(), 2);
 	}
 
 }

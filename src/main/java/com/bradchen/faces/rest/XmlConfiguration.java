@@ -14,6 +14,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.bradchen.faces.rest.data.DataFormatter;
+import com.bradchen.faces.rest.data.JsonDataAdapter;
+import com.bradchen.faces.rest.data.XmlDataAdapter;
 
 public final class XmlConfiguration implements Configuration {
 
@@ -51,10 +53,17 @@ public final class XmlConfiguration implements Configuration {
 		Element root = document.getRootElement();
 
 		Element servicesXml = root.element("services");
-		configureServices(servicesXml.elements("service"));
+		if (servicesXml != null) {
+			configureServices(servicesXml.elements("service"));
+		}
 
 		Element genericFormattersXml = root.element("genericDataFormatters");
-		configureDataFormatters(genericFormattersXml.elements("dataFormatter"));
+		if (genericFormattersXml == null) {
+			configureDefaultDataFormatters();
+		} else {
+			configureDataFormatters(genericFormattersXml.elements("dataFormatter"));
+		}
+
 		configured = true;
 	}
 
@@ -149,6 +158,13 @@ public final class XmlConfiguration implements Configuration {
 			String message = "Unable to parse parameter.";
 			throw new ConfigurationException(message, exception);
 		}
+	}
+
+	private void configureDefaultDataFormatters() {
+		DataFormatter json = new JsonDataAdapter();
+		DataFormatter xml = new XmlDataAdapter();
+		formatters.add(json);
+		formatters.add(xml);
 	}
 
 	private void configureDataFormatters(List<Element> formatters) {
