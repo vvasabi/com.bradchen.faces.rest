@@ -61,11 +61,11 @@ public final class Service {
 		return handler;
 	}
 
-	public boolean serves(HttpMethod method) {
-		if (method == null) {
+	public boolean serves(HttpMethod httpMethod) {
+		if (httpMethod == null) {
 			return true;
 		}
-		return method.equals(method);
+		return method.equals(httpMethod);
 	}
 
 	public boolean matches(String query) {
