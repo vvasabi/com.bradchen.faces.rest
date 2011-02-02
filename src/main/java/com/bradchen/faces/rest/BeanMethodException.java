@@ -1,5 +1,6 @@
 package com.bradchen.faces.rest;
 
+@SuppressWarnings("serial")
 public class BeanMethodException extends BeanException {
 
 	public BeanMethodException(String message) {

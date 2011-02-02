@@ -4,7 +4,15 @@ Bundle-Name: JSF REST Plugin
 Bundle-ManifestVersion: 2
 Bundle-Description: This is a JSF plugin for supporting RESTful web services.
 Bundle-SymbolicName: com.bradchen.faces.rest
-Export-Package: com.bradchen.faces.rest
-Import-Package: javax.faces;version="2",
+Export-Package: com.bradchen.faces.rest,
+ com.bradchen.faces.rest.data
+Import-Package: javax.el,
+ javax.faces;version="2",
+ javax.faces.application;version="2",
+ javax.faces.component;version="2",
+ javax.faces.context;version="2",
+ javax.faces.event;version="2",
+ javax.servlet,
+ javax.servlet.http,
  org.dom4j,
  org.dom4j.io

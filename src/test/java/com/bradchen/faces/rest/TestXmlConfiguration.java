@@ -10,13 +10,15 @@ import com.bradchen.faces.rest.data.DataFormatter;
 
 public class TestXmlConfiguration {
 
+	private MockContextFacade context;
 	private XmlConfiguration config;
 	private Service[] services;
 	private DataFormatter[] formatters;
 
 	@BeforeMethod
 	public void setup() {
-		config = new XmlConfiguration();
+		context = new MockContextFacade();
+		config = new XmlConfiguration(context);
 		config.configure("restful-faces.xml");
 		services = new Service[config.getServices().size()];
 		config.getServices().toArray(services);

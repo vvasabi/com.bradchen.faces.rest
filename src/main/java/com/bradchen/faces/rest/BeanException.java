@@ -1,5 +1,6 @@
 package com.bradchen.faces.rest;
 
+@SuppressWarnings("serial")
 public class BeanException extends RuntimeException {
 
 	public BeanException(String message) {

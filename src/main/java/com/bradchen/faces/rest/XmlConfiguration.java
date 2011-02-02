@@ -24,25 +24,17 @@ public final class XmlConfiguration implements Configuration {
 
 	private boolean configured;
 
-	private ClassLoader classLoader;
+	private ContextFacade context;
 
 	private Set<Service> services;
 
 	private Set<DataFormatter> formatters;
 
-	public XmlConfiguration() {
-		configured = false;
-		classLoader = this.getClass().getClassLoader();
-		services = new HashSet<Service>();
-		formatters = new HashSet<DataFormatter>();
-	}
-
-	public ClassLoader getClassLoader() {
-		return classLoader;
-	}
-
-	public void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
+	public XmlConfiguration(ContextFacade context) {
+		this.configured = false;
+		this.context = context;
+		this.services = new HashSet<Service>();
+		this.formatters = new HashSet<DataFormatter>();
 	}
 
 	public void configure() {
@@ -68,7 +60,7 @@ public final class XmlConfiguration implements Configuration {
 
 	private Document getXmlDocument(String path) {
 		try {
-			InputStream stream = classLoader.getResourceAsStream(path);
+			InputStream stream = context.getResourceAsStream(path);
 			SAXReader reader = new SAXReader();
 			Document document = reader.read(stream);
 			stream.close();
@@ -172,7 +164,8 @@ public final class XmlConfiguration implements Configuration {
 				String message = "Formatter class must be defined.";
 				throw new ConfigurationException(message);
 			}
-			Object formatter = classLoader.loadClass(clazz).newInstance();
+			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			Object formatter = loader.loadClass(clazz).newInstance();
 			if (!(formatter instanceof DataFormatter)) {
 				String message = "The DataFormatter specified needs to "
 					+ "implement the DataFormatter interface.";

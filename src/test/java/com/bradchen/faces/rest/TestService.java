@@ -2,19 +2,19 @@ package com.bradchen.faces.rest;
 
 import static org.testng.Assert.*;
 
-import java.util.Map;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestService {
 
+	private MockContextFacade context;
 	private XmlConfiguration config;
 	private Service[] services;
 
 	@BeforeMethod
 	public void setup() {
-		config = new XmlConfiguration();
+		context = new MockContextFacade();
+		config = new XmlConfiguration(context);
 		config.configure("restful-faces.xml");
 		services = new Service[config.getServices().size()];
 		config.getServices().toArray(services);
