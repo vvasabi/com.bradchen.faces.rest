@@ -10,6 +10,6 @@
 		</service>
 	</services>
 	<genericDataFormatters>
-		<dataFormatter class="com.bradchen.faces.rest.data.JsonDataFormatter" />
+		<dataFormatter class="com.bradchen.faces.rest.data.JsonDataAdapter" />
 	</genericDataFormatters>
 </restful-faces>

@@ -14,5 +14,7 @@ Import-Package: javax.el,
  javax.faces.event;version="2",
  javax.servlet,
  javax.servlet.http,
- org.dom4j,
- org.dom4j.io
+ org.codehaus.jackson;version="1.4";resolution:=optional,
+ org.codehaus.jackson.map;version="1.4";resolution:=optional,
+ org.dom4j;version="1.6",
+ org.dom4j.io;version="1.6"
