@@ -2,6 +2,9 @@ package com.bradchen.faces.rest;
 
 import static org.testng.Assert.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -18,6 +21,18 @@ public class TestService {
 		config.configure("restful-faces.xml");
 		services = new Service[config.getServices().size()];
 		config.getServices().toArray(services);
+	}
+
+	@Test
+	public void testServesTrue() {
+		Service service = services[0];
+		assertTrue(service.serves(HttpMethod.GET));
+	}
+
+	@Test
+	public void testServesFalse() {
+		Service service = services[0];
+		assertFalse(service.serves(HttpMethod.POST));
 	}
 
 	@Test
@@ -39,17 +54,25 @@ public class TestService {
 	}
 
 	@Test
-	public void testParseParameter() {
+	public void testParseQuery() throws SecurityException,
+			NoSuchMethodException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
+		Method method = Service.class.getDeclaredMethod("parseQuery", String.class);
+		method.setAccessible(true);
 		Service service = services[0];
-		String[] result = service.getSortedParameterValues("/test/abc/123");
+		String[] result = (String[])method.invoke(service, "/test/abc/123");
 		assertEquals(result[0], "123");
 		assertEquals(result[1], "abc");
 	}
 
 	@Test
-	public void testGetParameter() {
+	public void testGetParameterOrder() throws SecurityException,
+			NoSuchMethodException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
+		Method method = Service.class.getDeclaredMethod("getParameterOrder");
+		method.setAccessible(true);
 		Service service = services[0];
-		String[] params = service.getSortedParameters();
+		String[] params = (String[])method.invoke(service);
 		assertEquals(params[0], "param2");
 		assertEquals(params[1], "param1");
 	}

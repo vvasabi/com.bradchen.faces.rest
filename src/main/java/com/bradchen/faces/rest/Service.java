@@ -74,7 +74,7 @@ public final class Service {
 
 	public Object invoke(Object bean, String query) {
 		try {
-			String[] params = getSortedParameterValues(query);
+			String[] params = parseQuery(query);
 			Method method = handler.findMethod(bean);
 			if (method == null) {
 				String message = "Unable to find the handler method specified:" +
@@ -94,8 +94,8 @@ public final class Service {
 		}
 	}
 
-	public String[] getSortedParameterValues(String query) {
-		String[] params = getSortedParameters();
+	private String[] parseQuery(String query) {
+		String[] params = getParameterOrder();
 		Matcher matcher = regex.matcher(query);
 		Map<String, String> map = new HashMap<String, String>();
 		if (matcher.matches()) {
@@ -111,7 +111,7 @@ public final class Service {
 		return result;
 	}
 
-	public String[] getSortedParameters() {
+	private String[] getParameterOrder() {
 		Matcher matcher = paramPattern.matcher(url);
 		int i = 0;
 		int max = handler.getParameters().size();
