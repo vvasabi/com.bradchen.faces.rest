@@ -37,7 +37,6 @@ public class TestXmlDataAdapter {
 	@Test
 	public void testFormat() throws IOException, DocumentException {
 		String xml = adapter.format(data);
-		System.out.println(xml);
 		StringReader strReader = new StringReader(xml);
 		SAXReader reader = new SAXReader();
 		Document document = reader.read(strReader);
@@ -51,7 +50,6 @@ public class TestXmlDataAdapter {
 	@Test
 	public void testFormatNestedObject() throws IOException, DocumentException {
 		String xml = adapter.format(data);
-		System.out.println(xml);
 		StringReader strReader = new StringReader(xml);
 		SAXReader reader = new SAXReader();
 		Document document = reader.read(strReader);
