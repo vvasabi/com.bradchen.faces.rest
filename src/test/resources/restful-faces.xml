@@ -12,4 +12,7 @@
 	<genericDataFormatters>
 		<dataFormatter class="com.bradchen.faces.rest.data.JsonDataAdapter" />
 	</genericDataFormatters>
+	<genericDataParsers>
+		<dataParser class="com.bradchen.faces.rest.data.JsonDataAdapter" />
+	</genericDataParsers>
 </restful-faces>

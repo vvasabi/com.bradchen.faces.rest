@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.bradchen.faces.rest.data.DataFormatter;
+import com.bradchen.faces.rest.data.DataParser;
 
 public class TestXmlConfiguration {
 
@@ -14,6 +15,7 @@ public class TestXmlConfiguration {
 	private XmlConfiguration config;
 	private Service[] services;
 	private DataFormatter[] formatters;
+	private DataParser[] parsers;
 
 	@BeforeMethod
 	public void setup() {
@@ -25,6 +27,9 @@ public class TestXmlConfiguration {
 
 		formatters = new DataFormatter[config.getDataFormatters().size()];
 		config.getDataFormatters().toArray(formatters);
+
+		parsers = new DataParser[config.getDataParsers().size()];
+		config.getDataParsers().toArray(parsers);
 	}
 
 	@Test
@@ -56,8 +61,18 @@ public class TestXmlConfiguration {
 	}
 
 	@Test
+	public void testDataParsersSize() {
+		assertEquals(parsers.length, 1);
+	}
+
+	@Test
 	public void testDataFormatterClass() {
 		assertEquals(formatters[0].getMimeType(), "application/json");
+	}
+
+	@Test
+	public void testDataParserClass() {
+		assertEquals(parsers[0].getMimeType(), "application/json");
 	}
 
 	@Test(expectedExceptions = ConfigurationException.class)
@@ -66,10 +81,17 @@ public class TestXmlConfiguration {
 	}
 
 	@Test
-	public void testDefaultAdapters() {
+	public void testDefaultFormatters() {
 		config = new XmlConfiguration(context);
 		config.configure("default-adapters.xml");
 		assertEquals(config.getDataFormatters().size(), 1);
+	}
+
+	@Test
+	public void testDefaultParsers() {
+		config = new XmlConfiguration(context);
+		config.configure("default-adapters.xml");
+		assertEquals(config.getDataParsers().size(), 1);
 	}
 
 }

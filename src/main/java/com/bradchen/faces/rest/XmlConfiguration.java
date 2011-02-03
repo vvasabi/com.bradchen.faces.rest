@@ -14,6 +14,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.bradchen.faces.rest.data.DataFormatter;
+import com.bradchen.faces.rest.data.DataParser;
 import com.bradchen.faces.rest.data.JsonDataAdapter;
 
 public final class XmlConfiguration implements Configuration {
@@ -31,11 +32,14 @@ public final class XmlConfiguration implements Configuration {
 
 	private Set<DataFormatter> formatters;
 
+	private Set<DataParser> parsers;
+
 	public XmlConfiguration(ContextFacade context) {
 		this.configured = false;
 		this.context = context;
 		this.services = new HashSet<Service>();
 		this.formatters = new HashSet<DataFormatter>();
+		this.parsers = new HashSet<DataParser>();
 	}
 
 	public void configure() {
@@ -61,6 +65,13 @@ public final class XmlConfiguration implements Configuration {
 			configureDefaultDataFormatters();
 		} else {
 			configureDataFormatters(genericFormattersXml.elements("dataFormatter"));
+		}
+
+		Element genericParsersXml = root.element("genericDataParsers");
+		if (genericParsersXml == null) {
+			configureDefaultDataParsers();
+		} else {
+			configureDataParsers(genericParsersXml.elements("dataParser"));
 		}
 
 		configured = true;
@@ -164,6 +175,43 @@ public final class XmlConfiguration implements Configuration {
 		formatters.add(json);
 	}
 
+	private void configureDataParsers(List<Element> parsers) {
+		for (Element parser : parsers) {
+			configureDataParser(parser);
+		}
+	}
+
+	private void configureDataParser(Element xml) {
+		try {
+			String clazz = xml.attributeValue("class");
+			if ((clazz == null) || "".equals(clazz)) {
+				String message = "Parser class must be defined.";
+				throw new ConfigurationException(message);
+			}
+			Object parser = context.loadClass(clazz).newInstance();
+			if (!(parser instanceof DataParser)) {
+				String message = "The DataParser specified needs to implement"
+					+ " the DataParser interface.";
+				throw new ConfigurationException(message);
+			}
+			parsers.add((DataParser)parser);
+		} catch (InstantiationException exception) {
+			String message = "Unable to instantiate the DataParser specified.";
+			throw new ConfigurationException(message, exception);
+		} catch (IllegalAccessException exception) {
+			String message = "Unable to instantiate the DataParser specified.";
+			throw new ConfigurationException(message, exception);
+		} catch (ClassNotFoundException exception) {
+			String message = "Could not find the DataParser specified.";
+			throw new ConfigurationException(message, exception);
+		}
+	}
+
+	private void configureDefaultDataParsers() {
+		DataParser json = new JsonDataAdapter();
+		parsers.add(json);
+	}
+
 	private void configureDataFormatters(List<Element> formatters) {
 		for (Element formatter : formatters) {
 			configureDataFormatter(formatter);
@@ -205,6 +253,11 @@ public final class XmlConfiguration implements Configuration {
 	@Override
 	public Set<DataFormatter> getDataFormatters() {
 		return Collections.unmodifiableSet(formatters);
+	}
+
+	@Override
+	public Set<DataParser> getDataParsers() {
+		return Collections.unmodifiableSet(parsers);
 	}
 
 }
