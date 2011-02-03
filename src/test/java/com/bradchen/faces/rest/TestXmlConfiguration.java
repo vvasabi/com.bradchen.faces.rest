@@ -69,7 +69,7 @@ public class TestXmlConfiguration {
 	public void testDefaultAdapters() {
 		config = new XmlConfiguration(context);
 		config.configure("default-adapters.xml");
-		assertEquals(config.getDataFormatters().size(), 2);
+		assertEquals(config.getDataFormatters().size(), 1);
 	}
 
 }

@@ -15,7 +15,6 @@ import org.dom4j.io.SAXReader;
 
 import com.bradchen.faces.rest.data.DataFormatter;
 import com.bradchen.faces.rest.data.JsonDataAdapter;
-import com.bradchen.faces.rest.data.XmlDataAdapter;
 
 public final class XmlConfiguration implements Configuration {
 
@@ -162,9 +161,7 @@ public final class XmlConfiguration implements Configuration {
 
 	private void configureDefaultDataFormatters() {
 		DataFormatter json = new JsonDataAdapter();
-		DataFormatter xml = new XmlDataAdapter();
 		formatters.add(json);
-		formatters.add(xml);
 	}
 
 	private void configureDataFormatters(List<Element> formatters) {
