@@ -4,9 +4,13 @@ import static org.testng.Assert.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.bradchen.faces.rest.data.DataFormatter;
+import com.bradchen.faces.rest.data.DataParser;
 
 public class TestService {
 
@@ -75,6 +79,49 @@ public class TestService {
 		String[] params = (String[])method.invoke(service);
 		assertEquals(params[0], "param2");
 		assertEquals(params[1], "param1");
+	}
+
+	@Test
+	public void testResolveFormatterAcceptNull() {
+		Service service = services[0];
+		Set<DataFormatter> formatters = config.getDataFormatters();
+		DataFormatter formatter = service.resolveFormatter(formatters, context);
+		assertEquals(formatter.getMimeType(), "application/json");
+	}
+
+	@Test
+	public void testResolveFormatterAcceptAll() {
+		context.setAcceptedContentTypes(new String[] {"*/*"});
+		Service service = services[0];
+		Set<DataFormatter> formatters = config.getDataFormatters();
+		DataFormatter formatter = service.resolveFormatter(formatters, context);
+		assertEquals(formatter.getMimeType(), "application/json");
+	}
+
+	@Test
+	public void testResolveFormatterAcceptJson() {
+		context.setAcceptedContentTypes(new String[] {"application/json"});
+		Service service = services[0];
+		Set<DataFormatter> formatters = config.getDataFormatters();
+		DataFormatter formatter = service.resolveFormatter(formatters, context);
+		assertEquals(formatter.getMimeType(), "application/json");
+	}
+
+	@Test
+	public void testResolveParserNullContentType() {
+		Service service = services[0];
+		Set<DataParser> parsers = config.getDataParsers();
+		DataParser parser = service.resolveParser(parsers, context);
+		assertNull(parser);
+	}
+
+	@Test
+	public void testResolveParserJsonContentType() {
+		context.setRequestContentType("application/json; utf-8");
+		Service service = services[0];
+		Set<DataParser> parsers = config.getDataParsers();
+		DataParser parser = service.resolveParser(parsers, context);
+		assertEquals(parser.getMimeType(), "application/json");
 	}
 
 	@Test

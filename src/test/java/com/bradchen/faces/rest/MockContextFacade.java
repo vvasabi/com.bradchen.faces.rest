@@ -7,9 +7,11 @@ import java.util.Map;
 
 public class MockContextFacade implements ContextFacade {
 
+	private String[] accept;
 	private HttpMethod method;
 	private String query;
 	private String response;
+	private String contentType;
 	private Map<String, String> parameters;
 	private Map<String, Object> beans;
 
@@ -17,8 +19,18 @@ public class MockContextFacade implements ContextFacade {
 		method = HttpMethod.GET;
 		query = "";
 		response = "";
+		contentType = "";
 		parameters = new HashMap<String, String>();
 		beans = new HashMap<String, Object>();
+	}
+
+	@Override
+	public String[] getAcceptedContentTypes() {
+		return accept;
+	}
+
+	public void setAcceptedContentTypes(String[] accept) {
+		this.accept = accept;
 	}
 
 	@Override
@@ -42,6 +54,15 @@ public class MockContextFacade implements ContextFacade {
 	@Override
 	public InputStream getResourceAsStream(String path) {
 		return getClassLoader().getResourceAsStream(path);
+	}
+
+	@Override
+	public String getRequestContentType() {
+		return contentType;
+	}
+
+	public void setRequestContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 	@Override

@@ -4,8 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.bradchen.faces.rest.data.DataFormatter;
+import com.bradchen.faces.rest.data.DataParser;
 
 public final class Service {
 
@@ -121,6 +125,52 @@ public final class Service {
 			i++;
 		}
 		return result;
+	}
+
+	public DataFormatter resolveFormatter(Set<DataFormatter> formatters,
+			ContextFacade context) {
+		if (formatters.size() == 0) {
+			return null;
+		}
+		if (context.getAcceptedContentTypes() == null) {
+			return formatters.iterator().next();
+		}
+
+		String[] types = context.getAcceptedContentTypes();
+		for (String type : types) {
+			DataFormatter formatter = findMatch(formatters, type);
+			if (formatter != null) {
+				return formatter;
+			}
+		}
+		return null;
+	}
+
+	private DataFormatter findMatch(Set<DataFormatter> formatters, String type) {
+		String mime = type.split(";[\\s]*")[0];
+		Pattern regex = Pattern.compile(mime.replace("*", ".*"));
+		for (DataFormatter formatter : formatters) {
+			if (regex.matcher(formatter.getMimeType()).matches()) {
+				return formatter;
+			}
+		}
+		return null;
+	}
+
+	public DataParser resolveParser(Set<DataParser> parsers,
+			ContextFacade context) {
+		String contentType = context.getRequestContentType();
+		if ((parsers.size() == 0) || (contentType == null)) {
+			return null;
+		}
+
+		String mime = contentType.split(";")[0].trim();
+		for (DataParser parser : parsers) {
+			if (parser.getMimeType().equalsIgnoreCase(mime)) {
+				return parser;
+			}
+		}
+		return null;
 	}
 
 }

@@ -6,11 +6,15 @@ import java.util.Map;
 
 public interface ContextFacade {
 
+	String[] getAcceptedContentTypes();
+
 	HttpMethod getMethod();
 
 	Map<String, String> getParameters();
 
 	InputStream getResourceAsStream(String path);
+
+	String getRequestContentType();
 
 	String getQuery();
 

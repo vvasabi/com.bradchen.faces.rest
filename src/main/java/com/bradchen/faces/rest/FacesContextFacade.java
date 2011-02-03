@@ -16,6 +16,15 @@ public class FacesContextFacade implements ContextFacade {
 	private FacesContext context;
 
 	@Override
+	public String[] getAcceptedContentTypes() {
+		String accept =getRequest().getHeader("Accept");
+		if (accept == null) {
+			return new String[] {"*/*"};
+		}
+		return accept.split(",[\\s]*");
+	}
+
+	@Override
 	public HttpMethod getMethod() {
 		return HttpMethod.parse(getRequest().getMethod());
 	}
@@ -29,6 +38,11 @@ public class FacesContextFacade implements ContextFacade {
 	@Override
 	public InputStream getResourceAsStream(String path) {
 		return context.getExternalContext().getResourceAsStream(path);
+	}
+
+	@Override
+	public String getRequestContentType() {
+		return getRequest().getHeader("Content-Type");
 	}
 
 	@Override
