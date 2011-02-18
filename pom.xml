@@ -7,7 +7,7 @@
 	<groupId>com.bradchen.faces</groupId>
 	<artifactId>com.bradchen.faces.rest</artifactId>
 	<version>1.0.0.SNAPSHOT</version>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 
 	<name>RESTful Faces</name>
 	<url>http://www.bradchen.com/projects/jsf-rest-plug-in</url>
@@ -47,28 +47,27 @@
 
 	<build>
 		<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-						<compilerVersion>1.6</compilerVersion>
-					</configuration>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<compilerVersion>1.6</compilerVersion>
+				</configuration>
+			</plugin>
 
 			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.0.1</version>
-				<extensions>true</extensions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
 				<configuration>
-					<instructions>
-						<_include>
-							src/main/resources/META-INF/MANIFEST.MF
-						</_include>
-					</instructions>
+					<archive>
+						<manifestFile>
+							${basedir}/src/main/resources/META-INF/MANIFEST.MF
+						</manifestFile>
+					</archive>
 				</configuration>
 			</plugin>
 
@@ -133,15 +132,6 @@
 						</plugin>
 
 						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-surefire-report-plugin</artifactId>
-							<version>2.5</version>
-							<configuration>
-								<aggregate>true</aggregate>
-							</configuration>
-						</plugin>
-
-						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>javancss-maven-plugin</artifactId>
 							<version>2.0-beta-2</version>
@@ -159,19 +149,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>5.14</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.dom4j</groupId>
-			<artifactId>com.springsource.org.dom4j</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -191,15 +168,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>com.springsource.org.codehaus.jackson</artifactId>
-			<version>1.4.3</version>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>2.1.0.GA</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
-			<version>1.4.3</version>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>com.springsource.javax.ws.rs</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
